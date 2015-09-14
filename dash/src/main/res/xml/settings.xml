@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Device Settings" >
+        <ListPreference
+            android:key="prefDevType"
+            android:title="Type"
+            android:summary="Device type"
+            android:entries="@array/updateDevType"
+            android:entryValues="@array/updateDevTypeValues"/>
+        <ListPreference
+            android:key="prefRefreshRate"
+            android:title="Refresh"
+            android:summary="Refresh rate"
+            android:entries="@array/updateRefreshRate"
+            android:entryValues="@array/updateRefreshRateValues"/>
+        <CheckBoxPreference
+            android:key="prefStartDemo"
+            android:defaultValue="false"
+            android:title="Startup demo"
+            android:summary="Show startup demo after successful connection"/>
+    </PreferenceCategory>
+
+</PreferenceScreen>

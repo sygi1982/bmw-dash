@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="updateDevType">
+        <item name="USB">USB</item>
+        <item name="WIFI">WIFI</item>
+        <item name="BLUETOOTH">BLUETOOTH</item>
+        <item name="FAKE">FAKE</item>
+    </string-array>
+    <string-array name="updateDevTypeValues">
+        <item name="USB">0</item>
+        <item name="WIFI">1</item>
+        <item name="BLUETOOTH">2</item>
+        <item name="FAKE">255</item>
+    </string-array>
+    <string-array name="updateRefreshRate">
+        <item name="50">50ms</item>
+        <item name="100">100ms</item>
+        <item name="150">150ms</item>
+        <item name="200">200ms</item>
+        <item name="250">250ms</item>
+        <item name="300">300ms</item>
+        <item name="400">400ms</item>
+        <item name="500">500ms</item>
+        <item name="750">750ms</item>
+        <item name="1000">1000ms</item>
+    </string-array>
+    <string-array name="updateRefreshRateValues">
+        <item name="50">50</item>
+        <item name="100">100</item>
+        <item name="150">150</item>
+        <item name="200">200</item>
+        <item name="250">250</item>
+        <item name="300">300</item>
+        <item name="400">400</item>
+        <item name="500">500</item>
+        <item name="750">750</item>
+        <item name="1000">1000</item>
+    </string-array>
+
+</resources>

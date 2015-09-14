@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="gaugeWidth">350dp</dimen>
+    <dimen name="gaugeHeigth">350dp</dimen>
+    <dimen name="faderHeigth">75dp</dimen>
+    <dimen name="connStatWidth">40dp</dimen>
+    <dimen name="connStatHeigth">40dp</dimen>
+    <dimen name="txtSize">35sp</dimen>
+</resources>

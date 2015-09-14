@@ -1,0 +1,3 @@
+http://android.codeandmagic.org/android-gaugeview-library/
+
++ fix + animation skip change + disable range text values (bad size experience)

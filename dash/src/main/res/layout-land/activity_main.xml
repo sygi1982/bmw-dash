@@ -1,0 +1,79 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fullscreen_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="?android:attr/actionBarSize"
+    android:background="#ff0000"
+    tools:context="com.sygmi.dashui.DashActivity">
+
+    <RelativeLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_content"
+        android:background="@color/black">
+
+        <org.codeandmagic.android.gauge.GaugeView
+            android:id="@+id/gauge_view"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_width="@dimen/gaugeWidth"
+            android:layout_height="@dimen/gaugeHeigth"
+            app:rangeValues="@array/speed_array"
+            app:rangeColors="@array/speed_colors"
+            app:divisions="13"
+            app:subdivisions="4"
+            app:scaleStartValue="0.0"
+            app:scaleEndValue="260.0"/>
+
+        <com.sygmi.mybmw.dash.FaderView
+            android:id="@+id/faderView"
+            android:background="@drawable/gradient_left2right"
+            android:layout_toRightOf="@id/gauge_view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/faderHeigth"
+            android:layout_alignParentTop="true"
+            app:direction="left2Right"/>
+
+        <TextView android:id="@+id/connection_status"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentBottom="true"
+            android:layout_width="@dimen/connStatWidth"
+            android:layout_height="@dimen/connStatHeigth"
+            android:background="@color/red"/>
+
+        <TextView android:id="@+id/rpm_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/faderView"
+            android:layout_toRightOf="@id/gauge_view"
+            android:textColor="@color/blue"
+            android:textStyle="bold"
+            android:textSize="@dimen/txtSize"
+            android:text="0 [rpm]"/>
+
+        <TextView
+            android:id="@+id/speed_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rpm_content"
+            android:layout_toRightOf="@id/gauge_view"
+            android:textColor="@color/blue"
+            android:textStyle="bold"
+            android:textSize="@dimen/txtSize"
+            android:text="0 [kmh]"/>
+
+        <TextView
+            android:id="@+id/enginetemp_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/speed_content"
+            android:layout_toRightOf="@id/gauge_view"
+            android:textColor="@color/blue"
+            android:textStyle="bold"
+            android:textSize="@dimen/txtSize"
+            android:text="0 [C]"/>
+
+    </RelativeLayout>
+
+</FrameLayout>
