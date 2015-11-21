@@ -8,6 +8,7 @@ Adding a new platform specific driver is straight forward (see CanDriver.java & 
 so it is easy to use even CAN controller on embedded device (SoC), where low level layer is put into JNI .so lib.
 
 Currently the dash board exposes info about current speed, RPM (using fancy gauge views), and engine temperature.
+
 NOTE: Gauge library used in this project is taken from https://github.com/CodeAndMagic/GaugeView
 
 Tested on -> BMW E91 320D
