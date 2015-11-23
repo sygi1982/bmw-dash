@@ -9,6 +9,8 @@ so it is easy to use even CAN controller on embedded device (SoC), where low lev
 
 Currently the dash board exposes info about current speed, RPM (using fancy gauge views), and engine temperature.
 
+NOTE: Gauge library used in this project is taken from https://github.com/CodeAndMagic/GaugeView
+
 Tested on -> BMW E91 320D
 
 BMW dash board wiki -> https://github.com/sygi1982/bmw-dash/wiki
