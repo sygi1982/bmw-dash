@@ -67,17 +67,12 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            BroadcastReceiver mReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
-                        Log.d(TAG, "SCREEN OFF");
-                        stopCanService();
-                    } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
-                        Log.d(TAG, "SCREEN ON");
-                        startCanService();
-                    }
-                }
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                Log.d(TAG, "SCREEN OFF");
+                stopCanService();
+            } else if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+                Log.d(TAG, "SCREEN ON");
+                startCanService();
             };
         }
     };
@@ -419,7 +414,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
             startCanService();  // try to start service
         }
 
-        IntentFilter screenFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        IntentFilter screenFilter = new IntentFilter(Intent.ACTION_USER_PRESENT);
         screenFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mScreenReceiver, screenFilter);
     }
