@@ -25,6 +25,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
@@ -65,7 +66,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private boolean mStartDemo = false;
     private int mRefreshRate = -1;
 
-    BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             BroadcastReceiver mReceiver = new BroadcastReceiver() {
@@ -271,7 +272,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
 
             @Override
             public void onDebug(String info) {
-            //    Log.w(TAG, "[Debug] " + info);
+                //    Log.w(TAG, "[Debug] " + info);
             }
 
             @Override
@@ -282,7 +283,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         });
 
         mStatusView.setBackgroundColor(Color.GREEN);
-        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -291,7 +292,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         mSniffer = null;
         mStatusView.setBackgroundColor(Color.RED);
         resetVisualControls();
-        //getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
     @Override
@@ -423,6 +424,22 @@ public class DashActivity extends Activity implements ControllerService.IControl
         IntentFilter screenFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         screenFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mScreenReceiver, screenFilter);
+    }
+
+    @Override
+    protected void onPause() {
+
+        super.onPause();
+
+        // If the screen is off then the device has been locked
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        boolean isScreenOn = powerManager.isScreenOn();
+
+        Log.d(TAG, "Screen " + isScreenOn);
+        if (!isScreenOn) {
+            // The screen has been locked
+            // do stuff...
+        }
     }
 
     @Override
