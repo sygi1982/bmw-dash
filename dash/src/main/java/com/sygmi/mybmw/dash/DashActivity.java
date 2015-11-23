@@ -25,14 +25,12 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -424,22 +422,6 @@ public class DashActivity extends Activity implements ControllerService.IControl
         IntentFilter screenFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         screenFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mScreenReceiver, screenFilter);
-    }
-
-    @Override
-    protected void onPause() {
-
-        super.onPause();
-
-        // If the screen is off then the device has been locked
-        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        boolean isScreenOn = powerManager.isScreenOn();
-
-        Log.d(TAG, "Screen " + isScreenOn);
-        if (!isScreenOn) {
-            // The screen has been locked
-            // do stuff...
-        }
     }
 
     @Override

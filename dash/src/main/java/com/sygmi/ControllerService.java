@@ -235,6 +235,8 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
         devFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
         devFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
         devFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+
+        devFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mDeviceStateReceiver, devFilter);
 
         Log.w(TAG, "Starting service");
@@ -367,6 +369,14 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+
+            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+                Log.d(TAG, "SCREEN OFF");
+                //stopCanService();
+            } else if (intent.getAction().equals(Intent.ACTION_SCREEN_ON)) {
+                Log.d(TAG, "SCREEN ON");
+                //startCanService();
+            }
 
             if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
                 UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
