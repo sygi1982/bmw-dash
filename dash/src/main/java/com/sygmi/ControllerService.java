@@ -33,16 +33,10 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
     public static final int DEVICE_BLUETOOTH = 2;
     public static final int DEVICE_FAKE = 0xFF;
 
-    public static final String STR_DEVICE_USB = "USB";
-    public static final String STR_DEVICE_WIFI = "WIFI";
-    public static final String STR_DEVICE_BLUETOOTH = "BLUETOOTH";
-    public static final String STR_DEVICE_FAKE = "FAKE";
-
     private static final int MSG_CONTROLLER_ATTACHED = 0;
     private static final int MSG_CONTROLLER_DETACHED = 1;
     private static final int MSG_CONTROLLER_DATA_RECEIVED = 2;
     private static final int MSG_CONTROLLER_TIMEOUT = 3;
-    private static final int MSG_CONTROLLER_DISCOVERED = 4;
     private static final int MSG_CONTROLLER_ERROR = 0xFF;
 
     private static final int ATTACH_TIMEOUT = 10 * 1000;  // 10sec
@@ -119,23 +113,6 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
                         mObserver.onError(err);
                     }
                     mAttached = false;
-                    break;
-                case MSG_CONTROLLER_DISCOVERED:
-                    String type = (String) msg.obj;
-                    Log.w(TAG, "Controller device discovered occured " + type);
-                    if (mObserver != null) {
-                        if (type.equals(STR_DEVICE_USB)) {
-                            mObserver.onDiscovered(DEVICE_USB);
-                        } else if (type.equals(STR_DEVICE_WIFI)) {
-                            mObserver.onDiscovered(DEVICE_WIFI);
-                        } else if (type.equals(STR_DEVICE_BLUETOOTH)) {
-                            mObserver.onDiscovered(DEVICE_BLUETOOTH);
-                        } else if (type.equals(STR_DEVICE_FAKE)) {
-                            mObserver.onDiscovered(DEVICE_FAKE);
-                        } else {
-                            mObserver.onDiscovered(-1);
-                        }
-                    }
                     break;
             }
         }
@@ -228,16 +205,6 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
         mBaudrate = intent.getIntExtra(EXTRA_BAUDRATE, BAUDRATE_DEFAULT);
         mIds = intent.getIntArrayExtra(EXTRA_IDS);
 
-        IntentFilter devFilter = new IntentFilter();
-        devFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
-        devFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
-        devFilter.addAction(BluetoothDevice.ACTION_FOUND);
-        devFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        devFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        devFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
-
-        registerReceiver(mDeviceStateReceiver, devFilter);
-
         Log.w(TAG, "Starting service");
 
         return START_NOT_STICKY;
@@ -258,7 +225,6 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
 
         mDevice = null;
         mWatchdog.hug();
-        unregisterReceiver(mDeviceStateReceiver);
 
         Log.w(TAG, "Service stopped !");
     }
@@ -364,44 +330,4 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
         }
     }
 
-    private final BroadcastReceiver mDeviceStateReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-
-            if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
-                UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                if (usbDevice != null) {
-                    Log.d(TAG, "USB device attached");
-                    mHandler.obtainMessage(MSG_CONTROLLER_DISCOVERED, STR_DEVICE_USB).sendToTarget();
-                }
-            } else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
-                UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-                if (usbDevice != null) {
-                    Log.d(TAG, "USB device detached");
-                    //stopCanService(); // shall be already in stopping state but lets do stop one more time
-                }
-            } else if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
-                BluetoothDevice btDevice = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                if (btDevice != null) {
-                    Log.d(TAG, "Bluetoooth dettached");
-                    if (btDevice.getName() != null &&
-                            btDevice.getName().compareTo(Bluetooth2Can.DEVICE_NAME) == 0) {
-                        //if (mConnection!= null && mConnection.)
-                        //startCanService();
-                    }
-                }
-            } else if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
-                NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                if (info.isConnected()){
-                    Log.d(TAG, "Wifi device attached");
-                    // TODO: check if wifi name equals something reasonable
-                    //startCanService();
-                } else{
-                    Log.d(TAG, "Wifi device dettached");
-                    //stopCanService(); // shall be already in stopping state but lets do stop one more time
-                }
-            }
-        }
-    };
 }

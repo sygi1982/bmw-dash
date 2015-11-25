@@ -417,6 +417,10 @@ public class DashActivity extends Activity implements ControllerService.IControl
         IntentFilter screenFilter = new IntentFilter(Intent.ACTION_USER_PRESENT);
         screenFilter.addAction(Intent.ACTION_SCREEN_OFF);
         registerReceiver(mScreenReceiver, screenFilter);
+
+        Intent intent = new Intent(getApplicationContext(), EndpointStateService.class);
+
+        startService(intent);
     }
 
     @Override
