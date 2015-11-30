@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.codeandmagic.android.gauge.GaugeView;
 
@@ -231,7 +232,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
 
     @Override
     public void onConnected(String label) {
-        Log.w(TAG, "CAN Controller connected: " + label);
+        showPopup("CAN Controller connected: " + label);
         mSniffer = new BMWSniffer();
         mSniffer.setSnooper(new BMWSniffer.IBMWSnooper() {
 
@@ -281,7 +282,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
 
     @Override
     public void onDisconnected() {
-        Log.w(TAG, "CAN Controller disconnected !");
+        showPopup("CAN Controller disconnected !");
         mSniffer = null;
         mStatusView.setBackgroundColor(Color.RED);
         resetVisualControls();
@@ -300,7 +301,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
 
     @Override
     public void onTimeout() {
-        Log.w(TAG, "CAN Controller timeout - connection with bus lost !");
+        showPopup("CAN Controller timeout - connection with bus lost !");
         stopCanService();
     }
 
@@ -393,6 +394,11 @@ public class DashActivity extends Activity implements ControllerService.IControl
         mRefreshRate = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_REFRESH_RATE, "100"));
     }
 
+    private void showPopup(String text) {
+        Log.d(TAG, text);
+        Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -438,12 +444,12 @@ public class DashActivity extends Activity implements ControllerService.IControl
         if(intent.getStringExtra(EndpointStateService.ENDPOINT_ACTION).
                 equals(EndpointStateService.ENDPOINT_DISCOVERED))
         {
-            Log.d(TAG, "Endpoint discovered: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
+            showPopup("Endpoint discovered: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
         }
         else if(intent.getStringExtra(EndpointStateService.ENDPOINT_ACTION).
                 equals(EndpointStateService.ENDPOINT_LOST))
         {
-            Log.d(TAG, "Endpoint lost: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
+            showPopup("Endpoint lost: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
         }
     }
 
