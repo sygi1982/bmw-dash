@@ -388,9 +388,9 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private void getPrefs() {
         // Restore preferences
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mConnectionType = Integer.parseInt(sharedPrefs.getString("prefDevType", "255"));
-        mStartDemo = sharedPrefs.getBoolean("prefStartDemo", false);
-        mRefreshRate = Integer.parseInt(sharedPrefs.getString("prefRefreshRate", "100"));
+        mConnectionType = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_DEV_TYPE, "255"));
+        mStartDemo = sharedPrefs.getBoolean(SettingsActivity.ATTR_START_DEMO, false);
+        mRefreshRate = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_REFRESH_RATE, "100"));
     }
 
     @Override

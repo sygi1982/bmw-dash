@@ -2,5 +2,5 @@
 - usb attached event does not reach control service
 #- screen off does not fire
 #- add multiscreeen support
-- remove magic numbers
+#- remove magic numbers
 - handle endpoint state service in main activity
