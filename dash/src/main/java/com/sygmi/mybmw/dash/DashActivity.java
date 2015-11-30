@@ -419,7 +419,6 @@ public class DashActivity extends Activity implements ControllerService.IControl
         registerReceiver(mScreenReceiver, screenFilter);
 
         Intent intent = new Intent(getApplicationContext(), EndpointStateService.class);
-
         startService(intent);
     }
 
@@ -430,6 +429,22 @@ public class DashActivity extends Activity implements ControllerService.IControl
         Log.d(TAG, "onDestroy");
         unregisterReceiver(mScreenReceiver);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        if(intent.getStringExtra(EndpointStateService.ENDPOINT_ACTION).
+                equals(EndpointStateService.ENDPOINT_DISCOVERED))
+        {
+            Log.d(TAG, "Endpoint discovered: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
+        }
+        else if(intent.getStringExtra(EndpointStateService.ENDPOINT_ACTION).
+                equals(EndpointStateService.ENDPOINT_LOST))
+        {
+            Log.d(TAG, "Endpoint lost: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
+        }
     }
 
     @Override

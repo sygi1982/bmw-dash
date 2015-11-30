@@ -21,6 +21,11 @@ public class EndpointStateService extends Service {
 
     private static final String TAG = "EndpointStateService";
 
+    public static final String ENDPOINT_ACTION = ".eventAction";
+    public static final String ENDPOINT_DISCOVERED = ".endointDiscovered";
+    public static final String ENDPOINT_LOST = ".endointLost";
+    public static final String ENDPOINT_TYPE = ".eventType";
+
     public static final String STR_DEVICE_USB = "USB";
     public static final String STR_DEVICE_WIFI = "WIFI";
     public static final String STR_DEVICE_BLUETOOTH = "BLUETOOTH";
@@ -50,14 +55,21 @@ public class EndpointStateService extends Service {
 
             String data = (String)msg.obj;
 
+            Intent intent = new Intent(getApplicationContext(), DashActivity.class);
+
             switch(msg.what) {
                 case MSG_ENDPOINT_DISCOVERED:
                     Log.w(TAG, "Endpoint discovered " + data);
+                    intent.putExtra(ENDPOINT_ACTION, ENDPOINT_DISCOVERED);
                     break;
                 case MSG_ENDPOINT_LOST:
                     Log.w(TAG, "Endpoint lost " + data);
+                    intent.putExtra(ENDPOINT_ACTION, ENDPOINT_DISCOVERED);
                     break;
             }
+
+            intent.putExtra(ENDPOINT_TYPE, data);
+            startActivity(intent);
         }
     };
 
