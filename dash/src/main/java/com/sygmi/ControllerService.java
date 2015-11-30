@@ -115,7 +115,6 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
         public void onDisconnected();
         public void onDataReceived(String event);
         public void onTimeout();
-        public void onDiscovered(int deviceType);
         public void onError(String error);
     }
 

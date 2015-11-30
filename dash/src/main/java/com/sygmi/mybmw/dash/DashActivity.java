@@ -306,11 +306,6 @@ public class DashActivity extends Activity implements ControllerService.IControl
     }
 
     @Override
-    public void onDiscovered(int type) {
-        Log.w(TAG, "CAN Controller device found: " + type);
-    }
-
-    @Override
     public void onError(String error) {
         Log.e(TAG, "CAN Controller unexpected error: " + error);
         stopCanService();
