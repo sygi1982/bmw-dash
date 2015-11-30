@@ -58,7 +58,7 @@
             android:xlargeScreens="true" />
 
         <service
-            android:name=".EndpointStateService"
+            android:name="com.sygmi.EndpointStateService"
             android:enabled="true"
             android:exported="false" >
         </service>

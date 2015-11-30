@@ -10,6 +10,7 @@ package com.sygmi.mybmw.dash;
 
 import com.sygmi.BMWSniffer;
 import com.sygmi.ControllerService;
+import com.sygmi.EndpointStateService;
 import com.sygmi.FaderEffect;
 
 import android.app.Activity;

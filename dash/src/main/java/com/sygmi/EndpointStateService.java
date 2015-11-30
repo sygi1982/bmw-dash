@@ -1,4 +1,4 @@
-package com.sygmi.mybmw.dash;
+package com.sygmi;
 
 import android.app.Service;
 import android.bluetooth.BluetoothDevice;
