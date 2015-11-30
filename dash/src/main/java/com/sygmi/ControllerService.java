@@ -166,6 +166,8 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
     @Override
     public void onCreate() {
 
+        super.onCreate();
+
         mServiceThread = new Thread(new ServiceThread());
     }
 
@@ -216,6 +218,8 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
 
         mDevice = null;
         mWatchdog.hug();
+
+        super.onDestroy();
 
         Log.w(TAG, "Service stopped !");
     }

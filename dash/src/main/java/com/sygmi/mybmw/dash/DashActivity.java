@@ -65,7 +65,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private boolean mStartDemo = false;
     private int mRefreshRate = -1;
 
-    private BroadcastReceiver mScreenReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mLocalReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
@@ -74,7 +74,11 @@ public class DashActivity extends Activity implements ControllerService.IControl
             } else if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
                 Log.d(TAG, "SCREEN ON");
                 startCanService();
-            };
+            } else if(intent.getAction().equals(EndpointStateService.ENDPOINT_DISCOVERED)) {
+                showPopup("Endpoint discovered: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
+            } else if(intent.getAction().equals(EndpointStateService.ENDPOINT_LOST)) {
+                showPopup("Endpoint lost: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
+            }
         }
     };
 
@@ -307,7 +311,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
 
     @Override
     public void onError(String error) {
-        Log.e(TAG, "CAN Controller unexpected error: " + error);
+        showPopup("CAN Controller unexpected error: " + error);
         stopCanService();
     }
 
@@ -415,9 +419,11 @@ public class DashActivity extends Activity implements ControllerService.IControl
             startCanService();  // try to start service
         }
 
-        IntentFilter screenFilter = new IntentFilter(Intent.ACTION_USER_PRESENT);
-        screenFilter.addAction(Intent.ACTION_SCREEN_OFF);
-        registerReceiver(mScreenReceiver, screenFilter);
+        IntentFilter filter = new IntentFilter(Intent.ACTION_USER_PRESENT);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        filter.addAction(EndpointStateService.ENDPOINT_DISCOVERED);
+        filter.addAction(EndpointStateService.ENDPOINT_LOST);
+        registerReceiver(mLocalReceiver, filter);
 
         Intent intent = new Intent(getApplicationContext(), EndpointStateService.class);
         startService(intent);
@@ -428,24 +434,8 @@ public class DashActivity extends Activity implements ControllerService.IControl
         // only called when app is killed
         stopCanService();
         Log.d(TAG, "onDestroy");
-        unregisterReceiver(mScreenReceiver);
+        unregisterReceiver(mLocalReceiver);
         super.onDestroy();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent)
-    {
-        super.onNewIntent(intent);
-        if(intent.getStringExtra(EndpointStateService.ENDPOINT_ACTION).
-                equals(EndpointStateService.ENDPOINT_DISCOVERED))
-        {
-            showPopup("Endpoint discovered: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
-        }
-        else if(intent.getStringExtra(EndpointStateService.ENDPOINT_ACTION).
-                equals(EndpointStateService.ENDPOINT_LOST))
-        {
-            showPopup("Endpoint lost: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
-        }
     }
 
     @Override
@@ -485,6 +475,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         if (requestCode == SETTINGS_RESULT) {
             getPrefs();
             updateStatusIndicator(mConnectionType);
+            stopCanService();
         }
     }
 }

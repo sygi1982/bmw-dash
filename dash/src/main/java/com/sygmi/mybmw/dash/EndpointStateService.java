@@ -21,7 +21,6 @@ public class EndpointStateService extends Service {
 
     private static final String TAG = "EndpointStateService";
 
-    public static final String ENDPOINT_ACTION = ".eventAction";
     public static final String ENDPOINT_DISCOVERED = ".endointDiscovered";
     public static final String ENDPOINT_LOST = ".endointLost";
     public static final String ENDPOINT_TYPE = ".eventType";
@@ -34,9 +33,12 @@ public class EndpointStateService extends Service {
     private static final int MSG_ENDPOINT_DISCOVERED = 0;
     private static final int MSG_ENDPOINT_LOST = 1;
 
-    public EndpointStateService() {
+    @Override
+    public void onCreate() {
 
-        Log.d(TAG, "setup");
+        super.onCreate();
+
+        Log.d(TAG, "onCreate");
 
         IntentFilter devFilter = new IntentFilter();
         devFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
@@ -49,27 +51,37 @@ public class EndpointStateService extends Service {
         registerReceiver(mReceiver, devFilter);
     }
 
+    @Override
+    public void onDestroy() {
+
+        Log.d(TAG, "onDestroy");
+
+        unregisterReceiver(mReceiver);
+
+        super.onDestroy();
+    }
+
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
 
             String data = (String)msg.obj;
 
-            Intent intent = new Intent(getApplicationContext(), DashActivity.class);
+            Intent intent = new Intent();
 
             switch(msg.what) {
                 case MSG_ENDPOINT_DISCOVERED:
                     Log.w(TAG, "Endpoint discovered " + data);
-                    intent.putExtra(ENDPOINT_ACTION, ENDPOINT_DISCOVERED);
+                    intent.setAction(ENDPOINT_DISCOVERED);
                     break;
                 case MSG_ENDPOINT_LOST:
                     Log.w(TAG, "Endpoint lost " + data);
-                    intent.putExtra(ENDPOINT_ACTION, ENDPOINT_DISCOVERED);
+                    intent.setAction(ENDPOINT_LOST);
                     break;
             }
 
             intent.putExtra(ENDPOINT_TYPE, data);
-            startActivity(intent);
+            sendBroadcast(intent);
         }
     };
 
