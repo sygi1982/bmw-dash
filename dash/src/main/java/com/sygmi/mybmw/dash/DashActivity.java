@@ -76,9 +76,17 @@ public class DashActivity extends Activity implements ControllerService.IControl
                 Log.d(TAG, "SCREEN ON");
                 startCanService();
             } else if(intent.getAction().equals(EndpointStateService.ENDPOINT_DISCOVERED)) {
-                showPopup("Endpoint discovered: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
+                String endpoint = intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE);
+                showPopup("Endpoint discovered: " + endpoint);
+                if (mapDevType2String(mConnectionType).equals(endpoint)) {
+                    startCanService();
+                }
             } else if(intent.getAction().equals(EndpointStateService.ENDPOINT_LOST)) {
-                showPopup("Endpoint lost: " + intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE));
+                String endpoint = intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE);
+                showPopup("Endpoint lost: " + endpoint);
+                if (mapDevType2String(mConnectionType).equals(endpoint)) {
+                    stopCanService();
+                }
             }
         }
     };
@@ -343,23 +351,29 @@ public class DashActivity extends Activity implements ControllerService.IControl
         mConnected = false;
     }
 
-    private void updateStatusIndicator(int type) {
-        String status;
+    private String mapDevType2String(int type) {
+        String result;
         switch(type) {
             default:
             case ControllerService.DEVICE_USB:
-                status = "USB";
+                result = EndpointStateService.DEVICE_USB;
                 break;
             case ControllerService.DEVICE_WIFI:
-                status = "WIFI";
+                result = EndpointStateService.DEVICE_WIFI;
                 break;
             case ControllerService.DEVICE_BLUETOOTH:
-                status = "BT";
+                result = EndpointStateService.DEVICE_BLUETOOTH;
                 break;
             case ControllerService.DEVICE_FAKE:
-                status = "FAKE";
+                result = EndpointStateService.DEVICE_FAKE;
                 break;
         }
+
+        return result;
+    }
+
+    private void updateStatusIndicator(int type) {
+        String status = mapDevType2String(type);
 
         ((TextView) mStatusView).setText(status);
 

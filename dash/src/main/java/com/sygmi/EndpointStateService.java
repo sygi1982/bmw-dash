@@ -25,13 +25,15 @@ public class EndpointStateService extends Service {
     public static final String ENDPOINT_LOST = ".endointLost";
     public static final String ENDPOINT_TYPE = ".eventType";
 
-    public static final String STR_DEVICE_USB = "USB";
-    public static final String STR_DEVICE_WIFI = "WIFI";
-    public static final String STR_DEVICE_BLUETOOTH = "BLUETOOTH";
-    public static final String STR_DEVICE_FAKE = "FAKE";
+    public static final String DEVICE_USB = "USB";
+    public static final String DEVICE_WIFI = "WIFI";
+    public static final String DEVICE_BLUETOOTH = "BT";
+    public static final String DEVICE_FAKE = "FAKE";
 
     private static final int MSG_ENDPOINT_DISCOVERED = 0;
     private static final int MSG_ENDPOINT_LOST = 1;
+
+    private String mEndpointActive = null;
 
     @Override
     public void onCreate() {
@@ -73,15 +75,22 @@ public class EndpointStateService extends Service {
                 case MSG_ENDPOINT_DISCOVERED:
                     Log.w(TAG, "Endpoint discovered " + data);
                     intent.setAction(ENDPOINT_DISCOVERED);
+                    mEndpointActive = data;
                     break;
                 case MSG_ENDPOINT_LOST:
                     Log.w(TAG, "Endpoint lost " + data);
-                    intent.setAction(ENDPOINT_LOST);
+                    if (mEndpointActive != null &&
+                            mEndpointActive.equals(data)) {
+                        intent.setAction(ENDPOINT_LOST);
+                        mEndpointActive = null;
+                    }
                     break;
             }
 
-            intent.putExtra(ENDPOINT_TYPE, data);
-            sendBroadcast(intent);
+            if (intent.getAction() != null) {
+                intent.putExtra(ENDPOINT_TYPE, data);
+                sendBroadcast(intent);
+            }
         }
     };
 
@@ -99,7 +108,7 @@ public class EndpointStateService extends Service {
                 UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 if (usbDevice != null) {
                     Log.d(TAG, "USB device attached");
-                    mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, STR_DEVICE_USB).sendToTarget();
+                    mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, DEVICE_USB).sendToTarget();
                 }
             }
 
@@ -107,7 +116,7 @@ public class EndpointStateService extends Service {
                 UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 if (usbDevice != null) {
                     Log.d(TAG, "USB device detached");
-                    mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, STR_DEVICE_USB).sendToTarget();
+                    mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, DEVICE_USB).sendToTarget();
                 }
             }
 
@@ -117,7 +126,7 @@ public class EndpointStateService extends Service {
                     Log.d(TAG, "Bluetoooth device attached");
                     if (btDevice.getName() != null &&
                             btDevice.getName().compareTo(Bluetooth2Can.DEVICE_NAME) == 0) {
-                        mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, STR_DEVICE_BLUETOOTH).sendToTarget();
+                        mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, DEVICE_BLUETOOTH).sendToTarget();
                     }
                 }
             }
@@ -128,7 +137,7 @@ public class EndpointStateService extends Service {
                     Log.d(TAG, "Bluetoooth device dettached");
                     if (btDevice.getName() != null &&
                             btDevice.getName().compareTo(Bluetooth2Can.DEVICE_NAME) == 0) {
-                        mHandler.obtainMessage(MSG_ENDPOINT_LOST, STR_DEVICE_BLUETOOTH).sendToTarget();
+                        mHandler.obtainMessage(MSG_ENDPOINT_LOST, DEVICE_BLUETOOTH).sendToTarget();
                     }
                 }
             }
@@ -138,10 +147,10 @@ public class EndpointStateService extends Service {
                 // TODO: check if wifi name equals something reasonable
                 if (info.isConnected()){
                     Log.d(TAG, "Wifi device attached");
-                    mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, STR_DEVICE_BLUETOOTH).sendToTarget();
+                    mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, DEVICE_WIFI).sendToTarget();
                 } else{
                     Log.d(TAG, "Wifi device dettached");
-                    mHandler.obtainMessage(MSG_ENDPOINT_LOST, STR_DEVICE_BLUETOOTH).sendToTarget();
+                    mHandler.obtainMessage(MSG_ENDPOINT_LOST, DEVICE_WIFI).sendToTarget();
                 }
             }
         }
