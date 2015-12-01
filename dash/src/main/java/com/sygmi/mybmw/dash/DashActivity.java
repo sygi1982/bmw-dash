@@ -212,16 +212,22 @@ public class DashActivity extends Activity implements ControllerService.IControl
         if (f == null) {
             f = new FaderEffect(mRPMTasker, mRPMTasker.getLastValue(), mRPMTasker.getLastValue(), DEFAULT_VISUAL_DELAY);
             mRPMTasker.setFader(f);
+        } else {
+            mRPMTasker.onStep(mRPMTasker.getLastValue());
         }
         f = mSpeedTasker.getFader();
         if (f == null) {
             f = new FaderEffect(mSpeedTasker, mSpeedTasker.getLastValue(), mSpeedTasker.getLastValue(), DEFAULT_VISUAL_DELAY);
             mSpeedTasker.setFader(f);
+        } else {
+            mSpeedTasker.onStep(mSpeedTasker.getLastValue());
         }
         f = mEngineTempTasker.getFader();
         if (f == null) {
             f = new FaderEffect(mEngineTempTasker, mEngineTempTasker.getLastValue(), mEngineTempTasker.getLastValue(), DEFAULT_VISUAL_DELAY);
             mEngineTempTasker.setFader(f);
+        } else {
+            mEngineTempTasker.onStep(mEngineTempTasker.getLastValue());
         }
     }
 
