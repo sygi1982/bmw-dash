@@ -51,6 +51,8 @@ public class EndpointStateService extends Service {
         devFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 
         registerReceiver(mReceiver, devFilter);
+
+        Helpers.requestSuperUser();
     }
 
     @Override
@@ -123,9 +125,9 @@ public class EndpointStateService extends Service {
             if (BluetoothDevice.ACTION_ACL_CONNECTED.equals(action)) {
                 BluetoothDevice btDevice = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (btDevice != null) {
-                    Log.d(TAG, "Bluetoooth device attached");
                     if (btDevice.getName() != null &&
                             btDevice.getName().compareTo(Bluetooth2Can.DEVICE_NAME) == 0) {
+                        Log.d(TAG, "Bluetoooth device attached");
                         mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, DEVICE_BLUETOOTH).sendToTarget();
                     }
                 }
@@ -134,9 +136,9 @@ public class EndpointStateService extends Service {
             if (BluetoothDevice.ACTION_ACL_DISCONNECTED.equals(action)) {
                 BluetoothDevice btDevice = (BluetoothDevice) intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 if (btDevice != null) {
-                    Log.d(TAG, "Bluetoooth device dettached");
                     if (btDevice.getName() != null &&
                             btDevice.getName().compareTo(Bluetooth2Can.DEVICE_NAME) == 0) {
+                        Log.d(TAG, "Bluetoooth device dettached");
                         mHandler.obtainMessage(MSG_ENDPOINT_LOST, DEVICE_BLUETOOTH).sendToTarget();
                     }
                 }

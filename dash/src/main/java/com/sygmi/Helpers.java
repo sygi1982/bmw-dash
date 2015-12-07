@@ -15,13 +15,30 @@ import java.math.BigInteger;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
+import android.util.Log;
 
 public final class Helpers {
 
     static {
         System.loadLibrary("helpers-jni");
     }
-	
+
+    public static boolean requestSuperUser() {
+
+        Process sh;
+        try {
+            sh = Runtime.getRuntime().exec("su", null,null);
+            //sh.waitFor();
+        }
+        catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
     public static boolean grantFilePermissions(String filename, String permissions) {
 
         Process sh;
@@ -61,6 +78,7 @@ public final class Helpers {
         
         // Find the first available device
         for (UsbDevice device : usbManager.getDeviceList().values()) {
+            Log.w("test", "FTDI device " + device.getDeviceName());
         	if(device.getVendorId() == 0x0403) {	// FTDI
         		if(device.getProductId() == 0x6001) {  //ft232,245
         			return device.getDeviceName();

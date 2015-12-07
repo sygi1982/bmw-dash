@@ -77,14 +77,14 @@ public class DashActivity extends Activity implements ControllerService.IControl
                 startCanService();
             } else if(intent.getAction().equals(EndpointStateService.ENDPOINT_DISCOVERED)) {
                 String endpoint = intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE);
-                showPopup("Endpoint discovered: " + endpoint);
                 if (mapDevType2String(mConnectionType).equals(endpoint)) {
+                    showPopup("Endpoint discovered: " + endpoint);
                     startCanService();
                 }
             } else if(intent.getAction().equals(EndpointStateService.ENDPOINT_LOST)) {
                 String endpoint = intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE);
-                showPopup("Endpoint lost: " + endpoint);
                 if (mapDevType2String(mConnectionType).equals(endpoint)) {
+                    showPopup("Endpoint lost: " + endpoint);
                     stopCanService();
                 }
             }
