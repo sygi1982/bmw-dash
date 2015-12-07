@@ -144,13 +144,14 @@ public class EndpointStateService extends Service {
 
             if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                // TODO: check if wifi name equals something reasonable
-                if (info.isConnected()){
+
+                if (info.isConnected() &&
+                        info.getExtraInfo().contains(X2Can.DEVICE_NAME.toLowerCase())) {
                     Log.d(TAG, "Wifi device attached");
                     mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, DEVICE_WIFI).sendToTarget();
-                } else{
-                    Log.d(TAG, "Wifi device dettached");
-                    mHandler.obtainMessage(MSG_ENDPOINT_LOST, DEVICE_WIFI).sendToTarget();
+                } else if (info.getExtraInfo().contains("unknown")) {
+                        Log.d(TAG, "Wifi device dettached");
+                        mHandler.obtainMessage(MSG_ENDPOINT_LOST, DEVICE_WIFI).sendToTarget();
                 }
             }
         }

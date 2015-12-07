@@ -17,6 +17,8 @@ public final class X2Can extends CanDriver implements Runnable  {
 
     private static final String TAG = "X2Can";
 
+    public final static String DEVICE_NAME = "MYBMWDASH";
+
     private final byte CANCTRL_MODE_SWAP_CHANNEL = 64;
 
     private Handler mExceptionHandler;

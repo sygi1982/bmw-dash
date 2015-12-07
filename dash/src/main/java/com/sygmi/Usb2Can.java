@@ -17,6 +17,8 @@ public final class Usb2Can extends CanDriver implements Runnable {
 
     private static final String TAG = "Usb2Can";
 
+    public final static String DEVICE_NAME = "USB2CAN";
+
     private Handler mExceptionHandler;
     private Thread mHelperThread;
     private CanDriverMonitor mMonitor = null;
