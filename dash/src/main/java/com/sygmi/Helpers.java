@@ -28,7 +28,6 @@ public final class Helpers {
         Process sh;
         try {
             sh = Runtime.getRuntime().exec("su", null,null);
-            //sh.waitFor();
         }
         catch (IOException e) {
             // TODO Auto-generated catch block

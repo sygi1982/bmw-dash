@@ -54,19 +54,28 @@ public final class X2Can extends CanDriver implements Runnable  {
     public boolean initiate(int baudRate, int mode) {
         super.initiate(baudRate, mode);
 
+        boolean status = false;
+
         // skip non-standard baudRates
         if (baudRate > 1000) {
             return false;
         }
 
-	    return init(baudRate, mode | CANCTRL_MODE_SWAP_CHANNEL, 100);
+	    status = init(baudRate, mode | CANCTRL_MODE_SWAP_CHANNEL, 100);
+        if (status) {
+            mIsConnected = true;
+        }
+
+        return status;
    }
 
     @Override
     public void destroy() {
-        mHelperThread.interrupt();
-        deinit();
-        mIsConnected = false;
+        if (mIsConnected) {
+            mHelperThread.interrupt();
+            deinit();
+            mIsConnected = false;
+        }
         super.destroy();
     }
 

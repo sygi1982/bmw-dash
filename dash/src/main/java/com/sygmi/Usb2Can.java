@@ -83,9 +83,11 @@ public final class Usb2Can extends CanDriver implements Runnable {
 
     @Override
     public void destroy() {
-        mIsConnected = false;
-        mHelperThread.interrupt();
-        deinit();
+        if (mIsConnected) {
+            mIsConnected = false;
+            mHelperThread.interrupt();
+            deinit();
+        }
         super.destroy();
     }
 
