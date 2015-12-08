@@ -1,8 +1,10 @@
 - free crash - libusb_free_transfer causes this when bt adapter is being turned off - bta_jv_rfc_port_to_cb
-#- usb attached event does not reach control service
+- usb attached event does not reach control service
 #- screen off does not fire
 #- add multiscreeen support
 #- remove magic numbers
 #- handle endpoint state service in main activity
 - add watchdog in settings
 - add root permission for usb
+- add alarm for eg temperature
+- add PDC tab
