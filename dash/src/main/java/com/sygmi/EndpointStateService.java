@@ -52,7 +52,7 @@ public class EndpointStateService extends Service {
 
         registerReceiver(mReceiver, devFilter);
 
-        Helpers.requestSuperUser();
+        //Helpers.requestSuperUser();
     }
 
     @Override
@@ -118,7 +118,7 @@ public class EndpointStateService extends Service {
                 UsbDevice usbDevice = (UsbDevice) intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
                 if (usbDevice != null) {
                     Log.d(TAG, "USB device detached");
-                    mHandler.obtainMessage(MSG_ENDPOINT_DISCOVERED, DEVICE_USB).sendToTarget();
+                    mHandler.obtainMessage(MSG_ENDPOINT_LOST, DEVICE_USB).sendToTarget();
                 }
             }
 

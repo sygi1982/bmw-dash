@@ -9,7 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.USB_PERMISSION" />
 
-    <uses-feature android:name="android.hardware.usb.host" android:required="true" />
+    <uses-feature android:name="android.hardware.usb.host"/>
+    <uses-sdk android:minSdkVersion="12" />
 
     <!-- android:screenOrientation="portrait" -->
     <application
@@ -17,6 +18,7 @@
         android:icon="@drawable/apps_bmw"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <activity
             android:name=".DashActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -28,6 +30,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETTACHED" />
@@ -37,12 +40,13 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />
             <meta-data
-                android:name="android.hardware.usb.action.USB_DEVICE_DETTACHED"
+                android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"
                 android:resource="@xml/device_filter" />
 
             <intent-filter android:priority="100" >
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".SettingsActivity"
@@ -65,6 +69,7 @@
             android:name="com.sygmi.EndpointStateService"
             android:enabled="true"
             android:exported="false" >
+
         </service>
     </application>
 

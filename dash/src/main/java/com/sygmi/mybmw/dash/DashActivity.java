@@ -69,19 +69,22 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private BroadcastReceiver mLocalReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (intent.getAction().equals(Intent.ACTION_SCREEN_OFF)) {
+
+            String action = intent.getAction();
+
+            if (action.equals(Intent.ACTION_SCREEN_OFF)) {
                 Log.d(TAG, "SCREEN OFF");
                 stopCanService();
-            } else if (intent.getAction().equals(Intent.ACTION_USER_PRESENT)) {
+            } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
                 Log.d(TAG, "SCREEN ON");
                 startCanService();
-            } else if(intent.getAction().equals(EndpointStateService.ENDPOINT_DISCOVERED)) {
+            } else if (action.equals(EndpointStateService.ENDPOINT_DISCOVERED)) {
                 String endpoint = intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE);
                 if (mapDevType2String(mConnectionType).equals(endpoint)) {
                     showPopup("Endpoint discovered: " + endpoint);
                     startCanService();
                 }
-            } else if(intent.getAction().equals(EndpointStateService.ENDPOINT_LOST)) {
+            } else if (action.equals(EndpointStateService.ENDPOINT_LOST)) {
                 String endpoint = intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE);
                 if (mapDevType2String(mConnectionType).equals(endpoint)) {
                     showPopup("Endpoint lost: " + endpoint);
@@ -128,7 +131,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         }
 
         FaderEffect getFader() {
-              return mActualFader;
+            return mActualFader;
         }
 
         public int getLastValue() {
@@ -359,7 +362,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
 
     private String mapDevType2String(int type) {
         String result;
-        switch(type) {
+        switch (type) {
             default:
             case ControllerService.DEVICE_USB:
                 result = EndpointStateService.DEVICE_USB;
@@ -392,7 +395,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
 
     private void setupWidgets() {
         mSpeedGauge = (GaugeView) findViewById(R.id.gauge_view);
-        mRpmFaderView = (FaderView)findViewById(R.id.faderView);
+        mRpmFaderView = (FaderView) findViewById(R.id.faderView);
         mRpmFaderView.setMaxRange(BMWSniffer.MAX_RPM);
         mRPMText = (TextView) findViewById(R.id.rpm_content);
         mSpeedText = (TextView) findViewById(R.id.speed_content);

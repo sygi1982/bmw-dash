@@ -15,7 +15,6 @@ import java.math.BigInteger;
 import android.content.Context;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbManager;
-import android.util.Log;
 
 public final class Helpers {
 
@@ -73,11 +72,11 @@ public final class Helpers {
     }
 
     public static String findFtdiDevice(Context context) {
+
         UsbManager usbManager = (UsbManager)context.getSystemService(Context.USB_SERVICE);
-        
+
         // Find the first available device
         for (UsbDevice device : usbManager.getDeviceList().values()) {
-            Log.w("test", "FTDI device " + device.getDeviceName());
         	if(device.getVendorId() == 0x0403) {	// FTDI
         		if(device.getProductId() == 0x6001) {  //ft232,245
         			return device.getDeviceName();

@@ -5,7 +5,7 @@ android {
     buildToolsVersion '23.0.2'
 
     defaultConfig {
-        minSdkVersion 15
+        minSdkVersion 12
         targetSdkVersion 19
         versionCode 1
         versionName "1.0"
@@ -40,7 +40,7 @@ tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.0.1'
+    compile 'com.android.support:support-v4:23.0.2'
     compile 'com.android.support:appcompat-v7:+'
     compile fileTree(dir: 'lib', include: ['*.jar'])
     compile project(':gaugelib')
