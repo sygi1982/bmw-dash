@@ -31,9 +31,6 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
     private static final int MSG_CONTROLLER_TIMEOUT = 3;
     private static final int MSG_CONTROLLER_ERROR = 0xFF;
 
-    private static final int ATTACH_TIMEOUT = 10 * 1000;  // 10sec
-    private static final int GUARD_TIMEOUT = 3 * 1000;  // 3sec
-
     private static final int MAX_CONNECTION_ATTEMPTS = 3;
 
     private final LocalBinder mBinder = new LocalBinder();
@@ -41,11 +38,13 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
     public static final int TYPE_DEFAULT = DEVICE_USB;
     public static final int MODE_DEFAULT = CanDriver.MODE_NORMAL;
     public static final int BAUDRATE_DEFAULT = 100;  // 100kbps
+    public static final int TIMEOUT_DEFAULT = 0;
 
     public static final String EXTRA_TYPE = "extra.TYPE";
     public static final String EXTRA_MODE = "extra.MODE";
     public static final String EXTRA_BAUDRATE = "extra.BAUDRATE";
     public static final String EXTRA_IDS = "extra.IDS";
+    public static final String EXTRA_TIMEOUT = "extra.TIMEOUT";
 
     private IControllerObserver mObserver = null;
     private int mType = -1;
@@ -58,6 +57,8 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
 
     private Thread mServiceThread = null;
     private Watchdog mWatchdog = null;
+
+    private int mTimeout = -1;
 
     private int mConnectAttempt = MAX_CONNECTION_ATTEMPTS;
 
@@ -174,7 +175,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
     public void startPoll() {
 
         Log.w(TAG, "Starting service poll thread !");
-        mWatchdog = new Watchdog(ATTACH_TIMEOUT); // 10 sec for attaching process
+        mWatchdog = new Watchdog(mTimeout);
         mWatchdog.setMaster(this);
 
         if (mServiceThread.getState() == Thread.State.NEW) {
@@ -197,6 +198,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
         mMode = intent.getIntExtra(EXTRA_MODE, MODE_DEFAULT);
         mBaudrate = intent.getIntExtra(EXTRA_BAUDRATE, BAUDRATE_DEFAULT);
         mIds = intent.getIntArrayExtra(EXTRA_IDS);
+        mTimeout = intent.getIntExtra(EXTRA_TIMEOUT, TIMEOUT_DEFAULT);
 
         Log.w(TAG, "Starting service");
 
@@ -266,7 +268,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
             }
 
             status = mDevice.initiate(mBaudrate, mMode);
-            mWatchdog.giveMeat(GUARD_TIMEOUT);
+            mWatchdog.giveMeat(mTimeout);
 
             if (status) {
                 String label = mDevice.getProduct();
@@ -289,7 +291,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
                 // start HW and loop for rx data
                 boolean lastStatus = true;
 
-                mWatchdog.giveMeat(GUARD_TIMEOUT);
+                mWatchdog.giveMeat(mTimeout);
                 status = mDevice.receive(frame);
 
                 // skip rtr type frames

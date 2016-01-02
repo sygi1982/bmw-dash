@@ -45,7 +45,10 @@ public class Watchdog {
 
     public void poke() {
         Message angry = mWatcher.obtainMessage(MSG_ANGRY);
-        mWatcher.sendMessageDelayed(angry, mRest);
+
+        if (mRest > 0) {
+            mWatcher.sendMessageDelayed(angry, mRest);
+        }
     }
 
     public void hug() {

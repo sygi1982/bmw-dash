@@ -4,7 +4,7 @@
 #- add multiscreeen support
 #- remove magic numbers
 #- handle endpoint state service in main activity
-- add watchdog in settings
+#- add watchdog in settings
 #- add root permission for usb
 - add alarm for eg temperature
 - add PDC tab

@@ -19,6 +19,12 @@
             android:defaultValue="false"
             android:title="Startup demo"
             android:summary="Show startup demo after successful connection"/>
+        <ListPreference
+            android:key="prefEndpointTimeout"
+            android:title="Timeout"
+            android:summary="Endpoint timeout value"
+            android:entries="@array/updateEndpointTimeout"
+            android:entryValues="@array/updateEndpointTimeoutValues"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

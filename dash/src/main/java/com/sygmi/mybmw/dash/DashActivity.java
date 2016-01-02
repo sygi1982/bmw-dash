@@ -65,6 +65,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private int mConnectionType = -1;
     private boolean mStartDemo = false;
     private int mRefreshRate = -1;
+    private int mEndpointTimeout = -1;
 
     private BroadcastReceiver mLocalReceiver = new BroadcastReceiver() {
         @Override
@@ -343,6 +344,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         startIntent.putExtra(ControllerService.EXTRA_BAUDRATE, ControllerService.BAUDRATE_DEFAULT);
         startIntent.putExtra(ControllerService.EXTRA_MODE, ControllerService.MODE_DEFAULT);
         startIntent.putExtra(ControllerService.EXTRA_IDS, BMWSniffer.getIds());
+        startIntent.putExtra(ControllerService.EXTRA_TIMEOUT, mEndpointTimeout);
         startService(startIntent);
         bindService(startIntent, mConnection, Context.BIND_AUTO_CREATE);
         mConnected = true;
@@ -415,6 +417,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         mConnectionType = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_DEV_TYPE, "255"));
         mStartDemo = sharedPrefs.getBoolean(SettingsActivity.ATTR_START_DEMO, false);
         mRefreshRate = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_REFRESH_RATE, "100"));
+        mEndpointTimeout = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_ENDPOINT_TIMEOUT, "1000"));
     }
 
     private void showPopup(String text) {
