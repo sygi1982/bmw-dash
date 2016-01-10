@@ -9,5 +9,5 @@
 - add alarm for eg temperature
 - add PDC tab
 #- bt endpoint stop does not stop service
-- switch bt in run time
+#- switch bt in run time
 - "ibusb2can-jni.so has text relocations. This is wasting memory and prevents security hardening. Please fix."

@@ -26,8 +26,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /* This is simple BT driver that fetches hex string data from device
- * Device shall be paired using Android settings menu. BT shall be turned on
- * Only receiving is available */
+ * Device shall be paired using Android settings menu.
+ * Only RX path is available */
 public final class Bluetooth2Can extends CanDriver {
 
     private static final String TAG = "Bluetooth2Can";
@@ -68,6 +68,19 @@ public final class Bluetooth2Can extends CanDriver {
         setProduct(DEVICE_NAME);
     }
 
+    private void setBluetooth(boolean enable) {
+
+        boolean isEnabled = mAdapter.isEnabled();
+
+        if (enable && !isEnabled) {
+            mAdapter.enable();
+            while (!mAdapter.isEnabled());
+        }
+        else if(!enable && isEnabled) {
+            mAdapter.disable();
+        }
+    }
+
     @Override
     public boolean initiate(int baudRate, int mode) {
         super.initiate(baudRate, mode);
@@ -76,6 +89,8 @@ public final class Bluetooth2Can extends CanDriver {
             Log.w(TAG, "No bluetooth adapter found ....");
             return false;
         }
+
+        setBluetooth(true);
 
         Set<BluetoothDevice> bondedDevices = mAdapter.getBondedDevices();
         if (bondedDevices.size() == 0) {
@@ -153,6 +168,8 @@ public final class Bluetooth2Can extends CanDriver {
         }
 
         mIsConnected = false;
+        setBluetooth(false);
+
         super.destroy();
     }
 
