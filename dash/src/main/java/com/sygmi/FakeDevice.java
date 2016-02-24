@@ -49,17 +49,27 @@ public class FakeDevice extends CanDriver implements Runnable {
             String data;
             CanFrame frame;
 
-            data = "S1B4N20C4000000000000";
+            data = "S1B4N20C4000000000000";  // Speed
             frame = new CanFrame();
             //Log.w(TAG, "RX DATA " + data);
             Helpers.string2canframe(data, (Object) frame);
             mFrames.add(frame);
-            data = "SAAN00000000340D0000";
+            data = "SAAN00000000340D0000";  // RPM
             frame = new CanFrame();
             //Log.w(TAG, "RX DATA " + data);
             Helpers.string2canframe(data, (Object) frame);
             mFrames.add(frame);
-            data = "S1D0N8B00000000000000";
+            data = "S1D0N8B00000000000000"; // Engine temp.
+            frame = new CanFrame();
+            //Log.w(TAG, "RX DATA " + data);
+            Helpers.string2canframe(data, (Object) frame);
+            mFrames.add(frame);
+            data = "S1C2N8D725B5AFFFFFFFF"; // PDC
+            frame = new CanFrame();
+            //Log.w(TAG, "RX DATA " + data);
+            Helpers.string2canframe(data, (Object) frame);
+            mFrames.add(frame);
+            data = "S1D6NC00C"; // MFL
             frame = new CanFrame();
             //Log.w(TAG, "RX DATA " + data);
             Helpers.string2canframe(data, (Object) frame);

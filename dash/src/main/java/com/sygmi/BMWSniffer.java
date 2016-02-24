@@ -17,14 +17,21 @@ public class BMWSniffer {
     public final static int MAX_SPEED = 260;
     public final static int MAX_ENGINE_TEMP = 150;
 
+    public final static int PDC_TYPE_FRONT = 0;
+    public final static int PDC_TYPE_REAR = 1;
+
+    public final static int MFL_TYPE_PHONE = 0;
+
     private IBMWSnooper mSnooper = null;
 
     private Map<String, Sniffer> mEvents = new HashMap<String, Sniffer>();
 
     // ids supported
-    private static final int[] ids = new int[]{ 0xAA,  // rpm
-                                                0x1B4, // speed
-                                                0x1D0 }; // engine temp
+    private static final int[] ids = new int[]{ 0xAA,    // RPM
+                                                0x1B4,   // Speed
+                                                0x1C2,   // PDC (Park Distance Control)
+                                                0x1D0,   // Engine temperature
+                                                0x1D6 }; // MFL (Steering Wheel)
 
     public static int[] getIds() {
         return ids;
@@ -34,7 +41,9 @@ public class BMWSniffer {
 
         mEvents.put(String.format("%X", ids[0]), new EngineRPM());
         mEvents.put(String.format("%X", ids[1]), new VehicleSpeed());
-        mEvents.put(String.format("%X", ids[2]), new EngineTemp());
+        mEvents.put(String.format("%X", ids[2]), new ParkDistanceControl());
+        mEvents.put(String.format("%X", ids[3]), new EngineTemperature());
+        mEvents.put(String.format("%X", ids[4]), new SteeringWheelInput());
     }
 
     public void setSnooper(IBMWSnooper snooper) {
@@ -92,7 +101,7 @@ public class BMWSniffer {
             value /=4;
 
             if (value >= 0 && value < MAX_RPM && value != mValue) {
-                mSnooper.onEngineRPMUpdate(mValue, value);
+                mSnooper.onEngineRPMUpdated(mValue, value);
                 mValue = value;
             }
         }
@@ -116,28 +125,84 @@ public class BMWSniffer {
             value *= 1.6f;  // conversion mph to kmh
 
             if (value >= 0 && value < MAX_SPEED && value != mValue) {
-                mSnooper.onVehicleSpeedUpdate(mValue, value);
+                mSnooper.onVehicleSpeedUpdated(mValue, value);
                 mValue = value;
             }
         }
     }
 
-    private class EngineTemp extends Sniffer {
+    private class ParkDistanceControl extends Sniffer {
 
         @Override
         public void job(long data, int len) {
 
             if (len != 8) {
-                mSnooper.onError("len for engine temp id do not match, should be 8 but received " + len);
+                mSnooper.onError("len for PDC id do not match, should be 8 but received " + len);
                 return;
             }
 
-            mSnooper.onDebug("debug engine temp hex " + String.format("%X", (data >> 56) & 0xFF));
+            mSnooper.onDebug("debug PDC hex " + String.format("%X", data));
+            // only rear value for now
+            int value = (int)(data & (long)0xFFFFFFFF);
+
+            byte sensor1 = (byte)((data >> 24) & 0xFF);
+            byte sensor2 = (byte)((data >> 24) & 0xFF);
+            byte sensor3 = (byte)((data >> 8) & 0xFF);
+            byte sensor4 = (byte)(data & 0xFF);
+
+            if (value != mValue) {
+                mSnooper.onParkDistanceChanged(PDC_TYPE_REAR, sensor1, sensor2, sensor3, sensor4);
+                mValue = value;
+            }
+        }
+    }
+
+    private class EngineTemperature extends Sniffer {
+
+        @Override
+        public void job(long data, int len) {
+
+            if (len != 8) {
+                mSnooper.onError("len for engine temp. id do not match, should be 8 but received " + len);
+                return;
+            }
+
+            mSnooper.onDebug("debug engine temp. hex " + String.format("%X", (data >> 56) & 0xFF));
             byte value = (byte)((data >> 56) & (long)0xFF);
             value -= 48;
 
             if (value >= 0 && value < MAX_ENGINE_TEMP && value != mValue) {
-                mSnooper.onEngineTemperatureUpdate(mValue, value);
+                mSnooper.onEngineTemperatureUpdated(mValue, value);
+                mValue = value;
+            }
+        }
+    }
+
+    private class SteeringWheelInput extends Sniffer {
+
+        @Override
+        public void job(long data, int len) {
+
+            if (len != 2) {
+                mSnooper.onError("len for MFL id do not match, should be 2 but received " + len);
+                return;
+            }
+
+            mSnooper.onDebug("debug MFL hex " + String.format("%X", (data >> 56) & 0xFF));
+            short value = (short)(data & (long)0xFFFF);
+
+            //TODO: mask what needed
+
+            if (value != mValue) {
+
+                switch (mValue) {
+                    case 0xC001:
+                        mSnooper.onSteeringWheelInputTriggered(MFL_TYPE_PHONE);
+                        break;
+                    default:
+                        mSnooper.onDebug("skipping MFL hex " + String.format("%X", value));
+                        break;
+                }
                 mValue = value;
             }
         }
@@ -145,11 +210,15 @@ public class BMWSniffer {
 
     public interface IBMWSnooper {
 
-        public void onEngineRPMUpdate(int oldRPM, int newRPM);
+        public void onEngineRPMUpdated(int oldRPM, int newRPM);
 
-        public void onVehicleSpeedUpdate(int oldSpeed, int newSpeed);
+        public void onVehicleSpeedUpdated(int oldSpeed, int newSpeed);
 
-        public void onEngineTemperatureUpdate(int oldTemp, int newTemp);
+        public void onParkDistanceChanged(int pdcType, byte sensor1, byte sensor2, byte sensor3, byte sensor4);
+
+        public void onEngineTemperatureUpdated(int oldTemperature, int newTemperature);
+
+        public void onSteeringWheelInputTriggered(int type);
 
         public void onDebug(String msg);
 

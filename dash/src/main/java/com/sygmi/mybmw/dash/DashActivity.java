@@ -260,7 +260,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         mSniffer.setSnooper(new BMWSniffer.IBMWSnooper() {
 
             @Override
-            public void onEngineRPMUpdate(int oldVal, int newVal) {
+            public void onEngineRPMUpdated(int oldVal, int newVal) {
                 Log.w(TAG, "Got new rpm from sniffer " + newVal);
                 // make 1000ms fading
                 if (newVal >= 0) {
@@ -269,7 +269,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
                 }
             }
 
-            public void onVehicleSpeedUpdate(int oldVal, int newVal) {
+            public void onVehicleSpeedUpdated(int oldVal, int newVal) {
                 Log.w(TAG, "Got new speed from sniffer " + newVal);
                 // make 1000ms
                 if (newVal >= 0) {
@@ -278,7 +278,12 @@ public class DashActivity extends Activity implements ControllerService.IControl
                 }
             }
 
-            public void onEngineTemperatureUpdate(int oldVal, int newVal) {
+            public void onParkDistanceChanged(int pdcType, byte sensor1, byte sensor2, byte sensor3, byte sensor4) {
+                Log.w(TAG, "Got new PDC values " + sensor1 + " " + sensor2 + " " + sensor3 + " " + sensor4);
+                // TODO: switch to PDC fragment
+            }
+
+            public void onEngineTemperatureUpdated(int oldVal, int newVal) {
                 Log.w(TAG, "Got new engine temperature from sniffer " + newVal);
                 // make 1000ms
                 if (newVal >= 0) {
@@ -287,9 +292,16 @@ public class DashActivity extends Activity implements ControllerService.IControl
                 }
             }
 
+            public void onSteeringWheelInputTriggered(int type) {
+                Log.w(TAG, "Got MFL input event " + type);
+                if (type == BMWSniffer.MFL_TYPE_PHONE) {
+                    // TODO: answer call
+                }
+            }
+
             @Override
             public void onDebug(String info) {
-                //    Log.w(TAG, "[Debug] " + info);
+                Log.w(TAG, "[Debug] " + info);
             }
 
             @Override
