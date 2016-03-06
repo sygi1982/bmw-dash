@@ -30,6 +30,7 @@ public class FakeDevice extends CanDriver implements Runnable {
     private Lock mLock = new ReentrantLock();
     private Condition mCondition = mLock.newCondition();
     private ArrayList<CanFrame> mFrames = new ArrayList<CanFrame>();
+    private int mCounter = 0;
 
     public FakeDevice(Context context) {
         super(context);
@@ -69,7 +70,9 @@ public class FakeDevice extends CanDriver implements Runnable {
             //Log.w(TAG, "RX DATA " + data);
             Helpers.string2canframe(data, (Object) frame);
             mFrames.add(frame);
-            data = "S1D6NC00C"; // MFL
+            data = "S1D6NC00" + String.format("%X", mCounter);
+            mCounter += 1;
+            mCounter %= 15;
             frame = new CanFrame();
             //Log.w(TAG, "RX DATA " + data);
             Helpers.string2canframe(data, (Object) frame);

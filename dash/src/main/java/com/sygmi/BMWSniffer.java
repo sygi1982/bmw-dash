@@ -143,12 +143,12 @@ public class BMWSniffer {
 
             mSnooper.onDebug("debug PDC hex " + String.format("%X", data));
             // only rear value for now
-            int value = (int)(data & (long)0xFFFFFFFF);
+            int value = (int)((data >> 32) & (long)0xFFFFFFFF);
 
-            byte sensor1 = (byte)((data >> 24) & 0xFF);
-            byte sensor2 = (byte)((data >> 24) & 0xFF);
-            byte sensor3 = (byte)((data >> 8) & 0xFF);
-            byte sensor4 = (byte)(data & 0xFF);
+            byte sensor1 = (byte)((value >> 24) & 0xFF);
+            byte sensor2 = (byte)((value >> 16) & 0xFF);
+            byte sensor3 = (byte)((value >> 8) & 0xFF);
+            byte sensor4 = (byte)(value & 0xFF);
 
             if (value != mValue) {
                 mSnooper.onParkDistanceChanged(PDC_TYPE_REAR, sensor1, sensor2, sensor3, sensor4);
@@ -188,15 +188,15 @@ public class BMWSniffer {
                 return;
             }
 
-            mSnooper.onDebug("debug MFL hex " + String.format("%X", (data >> 56) & 0xFF));
+            mSnooper.onDebug("debug MFL hex " + String.format("%X", data & 0xFFFF));
             short value = (short)(data & (long)0xFFFF);
 
             //TODO: mask what needed
 
             if (value != mValue) {
 
-                switch (mValue) {
-                    case 0xC001:
+                switch (value) {
+                    case (short)0xC00C:
                         mSnooper.onSteeringWheelInputTriggered(MFL_TYPE_PHONE);
                         break;
                     default:

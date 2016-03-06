@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -295,7 +296,14 @@ public class DashActivity extends Activity implements ControllerService.IControl
             public void onSteeringWheelInputTriggered(int type) {
                 Log.w(TAG, "Got MFL input event " + type);
                 if (type == BMWSniffer.MFL_TYPE_PHONE) {
-                    // TODO: answer call
+                    TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                    if (telManager.getCallState() == TelephonyManager.CALL_STATE_RINGING) {
+                        /* There is lot of different approaches to answer incoming a phone call
+                         * however not working with different android versions
+                         * so use auto answer option when BT headset is connected */
+
+                        // do nothing
+                    }
                 }
             }
 
