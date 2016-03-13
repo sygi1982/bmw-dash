@@ -256,7 +256,8 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
                     mDevice = new Usb2Can(ControllerService.this);
                     break;
                 case DEVICE_WIFI:
-                    mDevice = new X2Can(ControllerService.this);
+                    mDevice = new Wifi2Can(ControllerService.this);
+                    //mDevice = new X2Can(ControllerService.this);
                     break;
                 case DEVICE_BLUETOOTH:
                     mDevice = new Bluetooth2Can(ControllerService.this);
