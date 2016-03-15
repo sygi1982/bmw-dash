@@ -87,6 +87,14 @@ public final class Wifi2Can extends CanDriver implements ComLink.ComLinkObserver
             mLink.destroy();
         }
 
+        try {
+            if (mSocket != null) {
+                mSocket.close();
+            }
+        } catch (IOException e) {
+            Log.w(TAG, "Problem when closing IP socket " + e.toString());
+        }
+
         mIsConnected = false;
 
         super.destroy();

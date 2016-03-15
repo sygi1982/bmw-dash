@@ -18,26 +18,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /* This is simple BT driver that fetches hex string data from device
  * Device shall be paired using Android settings menu.
  * Only RX path is available */
-public final class Bluetooth2Can extends CanDriver {
+public final class Bluetooth2Can extends CanDriver implements ComLink.ComLinkObserver {
 
     private static final String TAG = "Bluetooth2Can";
 
     /* Serial port profile */
     private final static UUID SSP_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
     public final static String DEVICE_NAME = "MYBMWDASH";
-
-    private final static String FWCMD_READ_INFO = "C01\r";
-    private final static String FWCMD_READ_FRAMES = "C02\r";
 
     private BluetoothAdapter mAdapter = null;
     private BluetoothSocket mSocket = null;
@@ -46,14 +39,7 @@ public final class Bluetooth2Can extends CanDriver {
     private BufferedReader mInput = null;
     private OutputStream mOutput = null;
 
-    private Thread mPollThread = null;
-
-    private ArrayList<CanFrame> mFrames = null;
-
-    private int mFilters = 0;
-
-    private Lock mLock = new ReentrantLock();
-    private Condition mCondition = mLock.newCondition();
+    private ComLink mLink = null;
 
     private CanDriverMonitor mMonitor = null;
 
@@ -79,6 +65,12 @@ public final class Bluetooth2Can extends CanDriver {
         else if(!enable && isEnabled) {
             mAdapter.disable();
         }
+    }
+
+    @Override
+    public void onException(int code) {
+        /* Just forward the exception code */
+        mMonitor.onException(code);
     }
 
     @Override
@@ -119,14 +111,10 @@ public final class Bluetooth2Can extends CanDriver {
             return false;
         }
 
+        mLink = new ComLink(this, mInput, mOutput);
+
         /* We skip baudrate and mode because those parameters are stored in non NVRAM in the device
          * Notice: hardware filters are used */
-
-        mFrames = new ArrayList<CanFrame>();
-
-        mPollThread = new Thread(new PollThread());
-        mPollThread.start();
-
         mIsConnected = true;
 
         return true;
@@ -134,121 +122,41 @@ public final class Bluetooth2Can extends CanDriver {
 
     @Override
     public boolean setAcceptFilter(int idMin, int idMax) {
-        /* Notice: we have set correct filter mapping in the FW side
-        * We have some dummy calculation here */
-        int count = idMax - idMin;
-        mFilters += count;
-        if (count == 0)
-            mFilters++;
+        if (mLink != null) {
+            return mLink.setFiltering(idMin, idMax);
+        }
 
-        return true;
+        return false;
     }
 
     @Override
     public void destroy() {
+
+        if (mLink != null) {
+            mLink.destroy();
+        }
 
         try {
             if (mSocket != null) {
                 mSocket.close();
             }
         } catch (IOException e) {
-            Log.w(TAG, "Problem when closing bluetooth device " + e.toString());
+            Log.w(TAG, "Problem when closing bluetooth socket " + e.toString());
         }
 
-        mLock.lock();
-        mCondition.signalAll();
-        mLock.unlock();
-
-        try {
-            if (mPollThread != null) {
-                mPollThread.interrupt();
-                mPollThread.join();
-            }
-        } catch (InterruptedException e) {
-        }
-
-        mIsConnected = false;
         setBluetooth(false);
+        mIsConnected = false;
 
         super.destroy();
     }
 
     @Override
     public boolean receive(CanFrame frame) {
-        boolean status = false;
-
-        mLock.lock();
-        try {
-            if (mFrames.isEmpty()) {
-                Log.w(TAG, "waiting ... ");
-                mCondition.await();
-            }
-
-            if (!mFrames.isEmpty()) {
-                Log.w(TAG, "receive ... ");
-                CanFrame tmp = mFrames.remove(0);
-                frame.clone(tmp);
-                status = true;
-            }
-        } catch (InterruptedException e) {
-
-        } finally {
-            mLock.unlock();
+        if (mLink != null) {
+            return mLink.receive(frame);
         }
 
-        return status;
+        return false;
     }
-
-    private class PollThread implements Runnable {
-
-        @Override
-        public void run() {
-
-            while (!Thread.currentThread().isInterrupted()) {
-
-                try {
-                    String cmd = FWCMD_READ_FRAMES;  // read command, firmware specific
-                    mOutput.write(cmd.getBytes());
-                    mOutput.flush();
-                } catch (IOException e) {
-                    Log.w(TAG, "Write error" + e.toString());
-                    mMonitor.onException(-1);
-                    break;
-                }
-
-                mLock.lock();
-                try {
-                    for (int i = 0; i < mFilters; i++ ) {
-                        if (!mInput.ready())
-                            break;
-
-                        String data = null;
-                        CanFrame frame = new CanFrame();
-                        data = mInput.readLine();
-
-                        Log.w(TAG, "RX DATA " + data);
-                        Helpers.string2canframe(data, (Object) frame);
-                        mFrames.add(frame);
-                        mCondition.signal();
-                    }
-                } catch (IOException e) {
-                    Log.w(TAG, "Read error" + e.toString());
-                    mMonitor.onException(-1);
-                    break;
-                } finally {
-                    mLock.unlock();
-                }
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    break;
-                }
-
-            }
-        }
-    }
-
-
 }
 
