@@ -97,7 +97,7 @@ public final class Bluetooth2Can extends CanDriver implements ComLink.ComLinkObs
         }
 
         if (mDevice == null) {
-            Log.w(TAG, "No " + DEVICE_NAME + "device");
+            Log.w(TAG, "No " + DEVICE_NAME + " device");
             return false;
         }
 

@@ -60,7 +60,7 @@ public final class Wifi2Can extends CanDriver implements ComLink.ComLinkObserver
             mOutput = mSocket.getOutputStream();
             mInput = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
         } catch (IOException e) {
-            Log.w(TAG, "Problem when connecting with server" + e.toString());
+            Log.w(TAG, "Problem when connecting with server " + e.toString());
             return false;
         }
 

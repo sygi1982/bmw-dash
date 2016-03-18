@@ -338,7 +338,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         try {
             mSniffer.sniff(data);
         } catch (BMWSniffer.BMWSnifferException excp) {
-            Log.w(TAG, "Sniffer exception :" + excp.getReason());
+            Log.w(TAG, "Sniffer exception : " + excp.getReason());
         }
     }
 
