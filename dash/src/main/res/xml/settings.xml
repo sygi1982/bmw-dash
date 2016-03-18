@@ -25,6 +25,11 @@
             android:summary="Endpoint timeout value"
             android:entries="@array/updateEndpointTimeout"
             android:entryValues="@array/updateEndpointTimeoutValues"/>
+        <EditTextPreference
+            android:key="prefWifiAddress"
+            android:title="Wifi IP address"
+            android:summary="Wifi endpoint host IP address"
+            android:defaultValue="192.168.4.1"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

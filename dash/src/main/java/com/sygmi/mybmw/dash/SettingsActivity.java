@@ -17,6 +17,7 @@ public class SettingsActivity extends PreferenceActivity{
     public static final String ATTR_START_DEMO = "prefStartDemo";
     public static final String ATTR_REFRESH_RATE = "prefRefreshRate";
     public static final String ATTR_ENDPOINT_TIMEOUT = "prefEndpointTimeout";
+    public static final String ATTR_WIFI_ENDPOINT_ADDR = "prefWifiAddress";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

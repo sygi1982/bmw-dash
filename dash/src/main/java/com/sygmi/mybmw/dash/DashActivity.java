@@ -67,6 +67,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private boolean mStartDemo = false;
     private int mRefreshRate = -1;
     private int mEndpointTimeout = -1;
+    private String mWifiIpAddress = null;
 
     private BroadcastReceiver mLocalReceiver = new BroadcastReceiver() {
         @Override
@@ -365,6 +366,9 @@ public class DashActivity extends Activity implements ControllerService.IControl
         startIntent.putExtra(ControllerService.EXTRA_MODE, ControllerService.MODE_DEFAULT);
         startIntent.putExtra(ControllerService.EXTRA_IDS, BMWSniffer.getIds());
         startIntent.putExtra(ControllerService.EXTRA_TIMEOUT, mEndpointTimeout);
+        if (mConnectionType == ControllerService.DEVICE_WIFI) {
+            startIntent.putExtra(ControllerService.EXTRA_AUX_DATA, mWifiIpAddress);
+        }
         startService(startIntent);
         bindService(startIntent, mConnection, Context.BIND_AUTO_CREATE);
         mConnected = true;
@@ -438,6 +442,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
         mStartDemo = sharedPrefs.getBoolean(SettingsActivity.ATTR_START_DEMO, false);
         mRefreshRate = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_REFRESH_RATE, "100"));
         mEndpointTimeout = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_ENDPOINT_TIMEOUT, "1000"));
+        mWifiIpAddress = sharedPrefs.getString(SettingsActivity.ATTR_WIFI_ENDPOINT_ADDR, "127.0.0.1");
     }
 
     private void showPopup(String text) {

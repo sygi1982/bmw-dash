@@ -45,6 +45,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
     public static final String EXTRA_BAUDRATE = "extra.BAUDRATE";
     public static final String EXTRA_IDS = "extra.IDS";
     public static final String EXTRA_TIMEOUT = "extra.TIMEOUT";
+    public static final String EXTRA_AUX_DATA = "extra.AUX_DATA";
 
     private IControllerObserver mObserver = null;
     private int mType = -1;
@@ -52,6 +53,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
     private int mBaudrate = -1;
     private int mScanPeriod = 10;  // 10ms
     private int[] mIds = null;
+    private String mAuxData = null;
 
     private boolean mAttached = false;
 
@@ -199,6 +201,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
         mBaudrate = intent.getIntExtra(EXTRA_BAUDRATE, BAUDRATE_DEFAULT);
         mIds = intent.getIntArrayExtra(EXTRA_IDS);
         mTimeout = intent.getIntExtra(EXTRA_TIMEOUT, TIMEOUT_DEFAULT);
+        mAuxData = intent.getStringExtra(EXTRA_AUX_DATA);
 
         Log.w(TAG, "Starting service");
 
@@ -256,7 +259,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
                     mDevice = new Usb2Can(ControllerService.this);
                     break;
                 case DEVICE_WIFI:
-                    mDevice = new Wifi2Can(ControllerService.this);
+                    mDevice = new Wifi2Can(ControllerService.this, mAuxData);
                     //mDevice = new X2Can(ControllerService.this);
                     break;
                 case DEVICE_BLUETOOTH:

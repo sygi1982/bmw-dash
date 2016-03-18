@@ -15,7 +15,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 
 /* This is simple Wifi driver that fetches hex string data from device
@@ -27,6 +30,8 @@ public final class Wifi2Can extends CanDriver implements ComLink.ComLinkObserver
 
     public final static String DEVICE_NAME = "MYBMWDASH";
 
+    private final static int DEVICE_PORT = 8888;
+
     private ComLink mLink = null;
 
     private BufferedReader mInput = null;
@@ -36,13 +41,30 @@ public final class Wifi2Can extends CanDriver implements ComLink.ComLinkObserver
 
     private Socket mSocket;
 
-    public Wifi2Can(Context context) {
+    private String mIpAddress;
+
+    public Wifi2Can(Context context, String ipAddress) {
         super(context);
 
         /* Controller service context */
         mMonitor = (CanDriverMonitor)context;
+        mIpAddress = ipAddress;
 
         setProduct(DEVICE_NAME);
+    }
+
+    public static boolean validateHost(String address) {
+
+        if (address == null || address.isEmpty()) {
+            return false;
+        }
+
+        try {
+            Object obj = InetAddress.getByName(address);
+            return obj instanceof Inet4Address;
+        } catch (final UnknownHostException ex) {
+            return false;
+        }
     }
 
     @Override
@@ -55,8 +77,13 @@ public final class Wifi2Can extends CanDriver implements ComLink.ComLinkObserver
     public boolean initiate(int baudRate, int mode) {
         super.initiate(baudRate, mode);
 
+        if (validateHost(mIpAddress) == false) {
+            Log.w(TAG, "Incorrect host address found ....");
+            return false;
+        }
+
         try {
-            mSocket = new Socket("192.168.4.1", 8888);
+            mSocket = new Socket(mIpAddress, DEVICE_PORT);
             mOutput = mSocket.getOutputStream();
             mInput = new BufferedReader(new InputStreamReader(mSocket.getInputStream()));
         } catch (IOException e) {
