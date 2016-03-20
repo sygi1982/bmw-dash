@@ -19,6 +19,11 @@ public class SettingsActivity extends PreferenceActivity{
     public static final String ATTR_ENDPOINT_TIMEOUT = "prefEndpointTimeout";
     public static final String ATTR_WIFI_ENDPOINT_ADDR = "prefWifiAddress";
 
+    public static final String ATTR_DEV_TYPE_DEFAULT_VAL = "255";
+    public static final String ATTR_REFRESH_RATE_DEFAULT_VAL = "100";
+    public static final String ATTR_ENDPOINT_TIMEOUT_DEFAULT_VAL = "1000";
+    public static final String ATTR_WIFI_ENDPOINT_ADDR_DEFAULT_VAL = "127.0.0.1";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

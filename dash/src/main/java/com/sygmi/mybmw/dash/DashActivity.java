@@ -438,11 +438,15 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private void getPrefs() {
         // Restore preferences
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mConnectionType = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_DEV_TYPE, "255"));
+        mConnectionType = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_DEV_TYPE,
+                SettingsActivity.ATTR_DEV_TYPE_DEFAULT_VAL));
         mStartDemo = sharedPrefs.getBoolean(SettingsActivity.ATTR_START_DEMO, false);
-        mRefreshRate = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_REFRESH_RATE, "100"));
-        mEndpointTimeout = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_ENDPOINT_TIMEOUT, "1000"));
-        mWifiIpAddress = sharedPrefs.getString(SettingsActivity.ATTR_WIFI_ENDPOINT_ADDR, "127.0.0.1");
+        mRefreshRate = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_REFRESH_RATE,
+                SettingsActivity.ATTR_REFRESH_RATE_DEFAULT_VAL));
+        mEndpointTimeout = Integer.parseInt(sharedPrefs.getString(SettingsActivity.ATTR_ENDPOINT_TIMEOUT,
+                SettingsActivity.ATTR_ENDPOINT_TIMEOUT_DEFAULT_VAL));
+        mWifiIpAddress = sharedPrefs.getString(SettingsActivity.ATTR_WIFI_ENDPOINT_ADDR,
+                SettingsActivity.ATTR_WIFI_ENDPOINT_ADDR_DEFAULT_VAL);
     }
 
     private void showPopup(String text) {
