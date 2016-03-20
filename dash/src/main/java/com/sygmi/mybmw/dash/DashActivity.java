@@ -14,6 +14,7 @@ import com.sygmi.EndpointStateService;
 import com.sygmi.FaderEffect;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -368,6 +369,10 @@ public class DashActivity extends Activity implements ControllerService.IControl
         startIntent.putExtra(ControllerService.EXTRA_TIMEOUT, mEndpointTimeout);
         if (mConnectionType == ControllerService.DEVICE_WIFI) {
             startIntent.putExtra(ControllerService.EXTRA_AUX_DATA, mWifiIpAddress);
+        }
+        if (mConnectionType == ControllerService.DEVICE_BLUETOOTH) {
+            startIntent.putExtra(ControllerService.EXTRA_AUX_DATA,
+                    String.valueOf(BluetoothAdapter.getDefaultAdapter().isEnabled()));
         }
         startService(startIntent);
         bindService(startIntent, mConnection, Context.BIND_AUTO_CREATE);

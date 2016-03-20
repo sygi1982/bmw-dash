@@ -43,11 +43,17 @@ public final class Bluetooth2Can extends CanDriver implements ComLink.ComLinkObs
 
     private CanDriverMonitor mMonitor = null;
 
-    public Bluetooth2Can(Context context) {
+    private boolean mWasEnabled = false;
+
+    public Bluetooth2Can(Context context, String enabled) {
         super(context);
 
         /* Controller service context */
         mMonitor = (CanDriverMonitor)context;
+
+        mWasEnabled = Boolean.parseBoolean(enabled);
+
+        Log.d(TAG, "mWasEnabled : " + mWasEnabled);
 
         mAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -56,14 +62,14 @@ public final class Bluetooth2Can extends CanDriver implements ComLink.ComLinkObs
 
     private void setBluetooth(boolean enable) {
 
-        boolean isEnabled = mAdapter.isEnabled();
-
-        if (enable && !isEnabled) {
-            mAdapter.enable();
-            while (!mAdapter.isEnabled());
-        }
-        else if(!enable && isEnabled) {
-            mAdapter.disable();
+        if (!mWasEnabled) {
+            if (enable) {
+                mAdapter.enable();
+                while (!mAdapter.isEnabled()) ;
+            }
+            else {
+                mAdapter.disable();
+            }
         }
     }
 

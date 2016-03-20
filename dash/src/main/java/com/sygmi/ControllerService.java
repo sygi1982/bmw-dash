@@ -263,7 +263,7 @@ public class ControllerService extends Service implements CanDriver.CanDriverMon
                     //mDevice = new X2Can(ControllerService.this);
                     break;
                 case DEVICE_BLUETOOTH:
-                    mDevice = new Bluetooth2Can(ControllerService.this);
+                    mDevice = new Bluetooth2Can(ControllerService.this, mAuxData);
                     break;
                 default:
                 case DEVICE_FAKE:

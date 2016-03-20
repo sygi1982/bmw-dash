@@ -48,7 +48,10 @@ public final class Wifi2Can extends CanDriver implements ComLink.ComLinkObserver
 
         /* Controller service context */
         mMonitor = (CanDriverMonitor)context;
+
         mIpAddress = ipAddress;
+
+        Log.d(TAG, "IP address : " + mIpAddress);
 
         setProduct(DEVICE_NAME);
     }
