@@ -70,6 +70,8 @@ public class DashActivity extends Activity implements ControllerService.IControl
     private int mEndpointTimeout = -1;
     private String mWifiIpAddress = null;
 
+    private boolean mIsVisible = false;
+
     private BroadcastReceiver mLocalReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -81,7 +83,12 @@ public class DashActivity extends Activity implements ControllerService.IControl
                 stopCanService();
             } else if (action.equals(Intent.ACTION_USER_PRESENT)) {
                 Log.d(TAG, "SCREEN ON");
-                startCanService();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startCanService();
+                    }
+                }, 500);
             } else if (action.equals(EndpointStateService.ENDPOINT_DISCOVERED)) {
                 String endpoint = intent.getStringExtra(EndpointStateService.ENDPOINT_TYPE);
                 if (mapDevType2String(mConnectionType).equals(endpoint)) {
@@ -358,7 +365,7 @@ public class DashActivity extends Activity implements ControllerService.IControl
 
     private void startCanService() {
 
-        if (mConnected == true)
+        if (mConnected ==  true || mIsVisible == false)
             return;
 
         Intent startIntent = new Intent(DashActivity.this, ControllerService.class);
@@ -473,6 +480,8 @@ public class DashActivity extends Activity implements ControllerService.IControl
         setupWidgets();
         getPrefs();
 
+        mIsVisible = true;
+
         updateStatusIndicator(mConnectionType);
         if (mStartDemo) {
             startDemo4VisualControls();
@@ -497,6 +506,20 @@ public class DashActivity extends Activity implements ControllerService.IControl
         Log.d(TAG, "onDestroy");
         unregisterReceiver(mLocalReceiver);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d(TAG, "onPause");
+        mIsVisible = false;
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        Log.d(TAG, "onResume");
+        mIsVisible = true;
+        super.onResume();
     }
 
     @Override
